@@ -26,3 +26,5 @@ C:\dev\DotNetWebSocketChat\obj\Debug\net7.0\DotNetWebSocketChat.genruntimeconfig
 C:\dev\DotNetWebSocketChat\obj\Debug\net7.0\ref\DotNetWebSocketChat.dll
 C:\dev\DotNetWebSocketChat\bin\Debug\net7.0\System.Net.WebSockets.WebSocketProtocol.dll
 C:\dev\DotNetWebSocketChat\obj\Debug\net7.0\DotNetWebSocketChat.csproj.CopyComplete
+C:\dev\DotNetWebSocketChat\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.dll
+C:\dev\DotNetWebSocketChat\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Abstractions.dll

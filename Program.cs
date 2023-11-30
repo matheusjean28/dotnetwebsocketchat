@@ -1,64 +1,29 @@
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
+using Services.ManegerRoom;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+builder.Services.AddScoped<ManegerRoom>();
 var app = builder.Build();
-
 var webSockets = new ConcurrentBag<WebSocket>();
 
 app.MapGet("/", () => "Hello World!");
-
+app.UseRouting();
 app.UseWebSockets();
-
-app.Use(async (context, next) =>
+app.Map("/api/chat", builder =>
 {
-    if (context.WebSockets.IsWebSocketRequest)
+    builder.UseEndpoints(endpoints =>
     {
-        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-        
-        webSockets.Add(webSocket);
-
-        await HandleWebSocketAsync(webSocket);
-    }
-    else
-    {
-        await next();
-    }
+        endpoints.MapControllers();
+    });
 });
 
-async Task HandleWebSocketAsync(WebSocket webSocket)
+app.MapControllers();
+app.UseCors(builder =>
 {
-    var buffer = new byte[1024 * 4];
-    var cancellationToken = new CancellationToken();
-
-    while (webSocket.State == WebSocketState.Open)
-    {
-        try
-        {
-            var result = await webSocket.ReceiveAsync(buffer, cancellationToken);
-
-            if (result.MessageType == WebSocketMessageType.Text)
-            {
-                var message = System.Text.Encoding.UTF8.GetString(buffer, 0, result.Count);
-
-                foreach (var socket in webSockets)
-                {
-                    if (socket.State == WebSocketState.Open)
-                    {
-                        await socket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, true, cancellationToken);
-                    }
-                }
-            }
-            else if (result.MessageType == WebSocketMessageType.Close)
-            {
-                await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, cancellationToken);
-            }
-        }
-        catch (WebSocketException)
-        {
-            break;
-        }
-    }
-}
-
+    builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+});
 app.Run();
