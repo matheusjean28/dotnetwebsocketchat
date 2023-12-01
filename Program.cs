@@ -10,7 +10,11 @@ var webSockets = new ConcurrentBag<WebSocket>();
 
 app.MapGet("/", () => "Hello World!");
 app.UseRouting();
-app.UseWebSockets();
+var webSocketOptions = new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromMinutes(2)
+};
+app.UseWebSockets(webSocketOptions);
 app.Map("/api/chat", builder =>
 {
     builder.UseEndpoints(endpoints =>
