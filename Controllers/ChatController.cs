@@ -34,7 +34,7 @@ namespace Controller.ChatController
                     {
                         _connections.Remove(webSocket);
                         await Broadcast($"{userName} left the room");
-                        await Broadcast($"{userName.Count} on the room");
+                        await Broadcast($"{_connections.Count} on the room");
                         await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
                     }
                 });
@@ -65,7 +65,6 @@ namespace Controller.ChatController
 
                 receiveResult = await webSocket.ReceiveAsync(
                     new ArraySegment<byte>(buffer), CancellationToken.None);
-                Thread.Sleep(1000);
             }
 
             await webSocket.CloseAsync(
