@@ -1,11 +1,8 @@
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
-using Services.ManegerRoom;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://localhost:5146");
 builder.Services.AddControllers();
-builder.Services.AddScoped<ManegerRoom>();
 var app = builder.Build();
 var webSockets = new ConcurrentBag<WebSocket>();
 
