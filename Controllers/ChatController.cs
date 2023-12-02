@@ -1,26 +1,28 @@
 using System.Net.WebSockets;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using Services.ManegerRoom;
 namespace Controller.ChatController
 {
     [ApiController]
     [Route("api/chat")]
     public class ChatController : ControllerBase
     {
-        private readonly ManegerRoom _manager;
+        private readonly List<WebSocket> _connections = new();
 
-        public ChatController(ManegerRoom manegerRoom)
-        {
-            _manager = manegerRoom;
-        }
 
         [HttpGet]
-        public async Task Get()
+        public async Task Get(HttpContext context)
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
+                var userName = context.Request.Query["name"];
                 using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+                Console.WriteLine(webSocket.State);
+                _connections.Add(webSocket);
                 await Echo(webSocket);
+                await Broadcast($"{userName} joined the room");
+                await Broadcast($"{userName.Count} on the room");
+
             }
             else
             {
@@ -41,16 +43,32 @@ namespace Controller.ChatController
                     receiveResult.MessageType,
                     receiveResult.EndOfMessage,
                     CancellationToken.None);
-                    Console.WriteLine("Current State Message", receiveResult.MessageType);
+
+
+                Console.WriteLine(webSocket);
 
                 receiveResult = await webSocket.ReceiveAsync(
                     new ArraySegment<byte>(buffer), CancellationToken.None);
+                Thread.Sleep(1000);
             }
 
             await webSocket.CloseAsync(
                 receiveResult.CloseStatus.Value,
                 receiveResult.CloseStatusDescription,
                 CancellationToken.None);
+        }
+
+        async Task Broadcast(string message)
+        {
+            var bytes = Encoding.UTF8.GetBytes(message);
+            foreach (var socket in _connections)
+            {
+                if (socket.State == WebSocketState.Open)
+                {
+                    var arraySegment = new ArraySegment<byte>(bytes, 0, bytes.Length);
+                    await socket.SendAsync(arraySegment , WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+            }
         }
     }
 
