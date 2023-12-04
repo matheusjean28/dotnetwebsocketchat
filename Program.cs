@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using Microsoft.OpenApi.Models;
@@ -41,4 +39,4 @@ app.UseCors(builder =>
            .AllowAnyMethod()
            .AllowAnyHeader();
 });
-app.Run();
+await app.RunAsync();

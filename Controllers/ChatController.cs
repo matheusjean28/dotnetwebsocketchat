@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,7 @@ namespace Controller.ChatController
         [HttpGet]
         public async Task Get(HttpContext context)
         {
+                Debug.Print("start connecting websocket");  
             Console.WriteLine(context.Connection.GetType());
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
