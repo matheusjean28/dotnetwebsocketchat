@@ -9,15 +9,23 @@ namespace Controller.ChatController
     {
         private readonly List<WebSocket> _connections = new();
 
+        [HttpGet]
+        [Route("api")]
+
+        public async Task<OkObjectResult> GetFiles()
+        {
+            return Ok("all done");
+        }
+
 
         [HttpGet]
         public async Task Get(HttpContext context)
         {
+            Console.WriteLine(context.Connection.GetType());
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
                 var userName = context.Request.Query["name"];
                 using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-                Console.WriteLine(webSocket.State);
                 _connections.Add(webSocket);
                 await Echo(webSocket);
                 await Broadcast($"{userName} joined the room");
@@ -86,7 +94,7 @@ namespace Controller.ChatController
             }
         }
 
-         async Task ReciveMessage(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage)
+        async Task ReciveMessage(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage)
         {
             var buffer = new byte[1024 * 4];
             while (socket.State == WebSocketState.Open)

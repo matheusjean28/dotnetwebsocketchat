@@ -28,3 +28,8 @@ C:\dev\DotNetWebSocketChat\obj\Debug\net7.0\refint\DotNetWebSocketChat.dll
 C:\dev\DotNetWebSocketChat\obj\Debug\net7.0\DotNetWebSocketChat.pdb
 C:\dev\DotNetWebSocketChat\obj\Debug\net7.0\DotNetWebSocketChat.genruntimeconfig.cache
 C:\dev\DotNetWebSocketChat\obj\Debug\net7.0\ref\DotNetWebSocketChat.dll
+C:\dev\DotNetWebSocketChat\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\dev\DotNetWebSocketChat\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\dev\DotNetWebSocketChat\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\dev\DotNetWebSocketChat\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\dev\DotNetWebSocketChat\obj\Debug\net7.0\DotNetWebSocketChat.MvcApplicationPartsAssemblyInfo.cs
