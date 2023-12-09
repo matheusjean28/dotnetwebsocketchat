@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "6X6xxYtI1LjXrwl4HyvKegBDQSDBb0G8PsXTtFkusAs=",
+  "Source": "DotNetWebSocketChat",
+  "BasePath": "_content/DotNetWebSocketChat",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

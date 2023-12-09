@@ -1,42 +1,39 @@
-using System.Collections.Concurrent;
+using System;
 using System.Net.WebSockets;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
-  {
-      c.SwaggerDoc("v1", new OpenApiInfo { Title = "DotNetWebSocketChat", Version = "v1" });
-  });
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "DotNetWebSocketChat", Version = "v1" });
+});
+
 var app = builder.Build();
-var webSockets = new ConcurrentBag<WebSocket>();
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-  {
-      c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nome da Sua API V1");
-      c.RoutePrefix = string.Empty;
-  });
-app.MapGet("/", () => "Hello World!");
+
 app.UseRouting();
+
 var webSocketOptions = new WebSocketOptions
 {
     KeepAliveInterval = TimeSpan.FromMinutes(2)
 };
+webSocketOptions.AllowedOrigins.Add("http://localhost:5146");
+webSocketOptions.AllowedOrigins.Add("ws://localhost:5146");
 app.UseWebSockets(webSocketOptions);
-app.Map("/api/chat", builder =>
-{
-    builder.UseEndpoints(endpoints =>
-    {
-        endpoints.MapControllers();
-    });
-});
 
 app.MapControllers();
-app.UseCors(builder =>
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    builder.AllowAnyOrigin()
-           .AllowAnyMethod()
-           .AllowAnyHeader();
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nome da Sua API V1");
+    c.RoutePrefix = string.Empty;
 });
+
+app.MapGet("/", () => "Hello World!");
+
 await app.RunAsync();

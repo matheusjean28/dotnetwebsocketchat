@@ -1,32 +1,44 @@
-using System.Diagnostics;
+using System;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+
 namespace Controller.ChatController
 {
     [ApiController]
-    [Route("api/chat")]
-    public class ChatController : ControllerBase
+    [Route("/ws")]
+    public class WebSocketController : ControllerBase
     {
         private readonly List<WebSocket> _connections = new();
+        private readonly ILogger<WebSocketController> _logger;
 
-        [HttpGet]
-        [Route("api")]
-
-        public async Task<OkObjectResult> GetFiles()
+        public WebSocketController(ILogger<WebSocketController> logger)
         {
-            return Ok("all done");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+       
 
         [HttpGet]
-        public async Task Get(HttpContext context)
+        public async Task Chat(HttpContext context)
         {
-                Debug.Print("start connecting websocket");  
+            var typeconect = context.Connection.GetType();
+            _logger.LogInformation($"{typeconect}");
+            _logger.LogInformation("Beat here .");
+
             Console.WriteLine(context.Connection.GetType());
-            if (HttpContext.WebSockets.IsWebSocketRequest)
+            Console.WriteLine("pass here");
+              if (context.Request.Path == "/ws")
+            {if (HttpContext.WebSockets.IsWebSocketRequest == true)
             {
                 var userName = context.Request.Query["name"];
+                _logger.LogInformation($"{userName} is attempting to join the room.");
                 using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 _connections.Add(webSocket);
                 await Echo(webSocket);
@@ -53,7 +65,8 @@ namespace Controller.ChatController
             else
             {
                 HttpContext.Response.StatusCode = 400;
-            }
+            }}
+            
         }
 
         private static async Task Echo(WebSocket webSocket)
